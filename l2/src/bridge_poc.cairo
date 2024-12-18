@@ -5,10 +5,8 @@ type L1Address = u256;
 
 #[starknet::interface]
 trait IBridgePOC<TContractState> {
-    fn deposit(ref self: TContractState, recipient: ContractAddress, amount: u256) {
-    }
-    fn withdraw(ref self: TContractState, recipient: L1Address, amount: u256) {
-    }
+    fn deposit(ref self: TContractState, recipient: ContractAddress, amount: u256) {}
+    fn withdraw(ref self: TContractState, recipient: L1Address, amount: u256) {}
 }
 
 
@@ -28,8 +26,8 @@ mod BridgePOC {
     pub const TREE_HEIGHT: u8 = 16;
 
     // Branch of a merkle tree of withdrawal requests. Uses algo described here:
-    // * https://github.com/ethereum/research/blob/a4a600f2869feed5bfaab24b13ca1692069ef312/beacon_chain_impl/progressive_merkle_tree.py
-    // * https://www.youtube.com/watch?v=nZ8cquX5kew&ab_channel=FormalMethodsEurope
+    // https://github.com/ethereum/research/blob/a4a600f2869feed5bfaab24b13ca1692069ef312/beacon_chain_impl/progressive_merkle_tree.py
+    // https://www.youtube.com/watch?v=nZ8cquX5kew&ab_channel=FormalMethodsEurope
     #[phantom]
     #[starknet::storage_node]
     struct Branch {
@@ -44,11 +42,8 @@ mod BridgePOC {
 
     #[abi(embed_v0)]
     impl BridgePOC of super::IBridgePOC<ContractState> {
-        fn deposit(ref self: ContractState, recipient: ContractAddress, amount: u256) {
-        }
-        fn withdraw(ref self: ContractState, recipient: L1Address, amount: u256) {
-        }
-
+        fn deposit(ref self: ContractState, recipient: ContractAddress, amount: u256) {}
+        fn withdraw(ref self: ContractState, recipient: L1Address, amount: u256) {}
     }
 
     #[generate_trait]
@@ -76,8 +71,8 @@ mod BridgePOC {
 
         fn append(ref self: ContractState, withdrawal: Digest) {
             let mut value = withdrawal;
-            let original_size = self.withdrawals.size.read(); 
-        
+            let original_size = self.withdrawals.size.read();
+
             // TODO: close the queue when it's full?
             if original_size == Bounded::<u16>::MAX {
                 panic!("BridgePoc::withdrawals queue is full");
@@ -85,24 +80,23 @@ mod BridgePOC {
 
             let mut size = original_size;
             let mut i = 0;
-        
+
             while size % 2 == 1 {
                 let element = self.withdrawals.elements.at(i).read();
                 value = double_sha256_digests(@element, @value);
                 size = size / 2;
                 i += 1;
             };
-    
+
             self.withdrawals.elements.at(i).write(value);
             self.withdrawals.size.write(original_size + 1);
         }
 
         fn root(self: @ContractState) -> Digest {
-
             let zero_hashes = Self::ZERO_HASHES.span();
 
             let mut root = DigestTrait::new(*zero_hashes.at(0));
-            
+
             let mut height = 0;
             let mut size = self.withdrawals.size.read();
 
@@ -120,9 +114,7 @@ mod BridgePOC {
 
             root
         }
-
     }
-
 }
 
 #[cfg(test)]
