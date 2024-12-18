@@ -1,0 +1,28 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+permissions: read-all
+
+jobs:
+  l2-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./l2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.9.1"
+      - uses: foundry-rs/setup-snfoundry@v3
+        with:
+          starknet-foundry-version: 0.34.0        
+      - run: pwd
+      - run: scarb --version
+      - run: scarb fmt --check
+      - run: scarb build
