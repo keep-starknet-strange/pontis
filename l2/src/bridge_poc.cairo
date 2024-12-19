@@ -62,11 +62,14 @@ pub mod BridgePOC {
             [1829197597, 3996005857, 931906618, 2383644882, 4277580546, 482972235, 2287817650, 3459845800],
             [2257188826, 1732868934, 4244326882, 39139633, 3210730636, 2509762326, 1485744241, 392942686],
         ];
-        
+
         fn get_element(self: @ContractState, i: u64) -> Digest {
             match self.withdrawals.elements.get(i) {
                 Option::Some(element) => element.read(),
-                Option::None => { panic!("should not happen!"); Zero::zero() },
+                Option::None => {
+                    panic!("should not happen!");
+                    Zero::zero()
+                },
             }
         }
 
@@ -164,7 +167,6 @@ mod merkle_tree_tests {
     }
 
     fn test_data(size: u256) {
-
         let data = data(size).span();
 
         let mut bridge = BridgePOC::contract_state_for_testing();
@@ -179,31 +181,31 @@ mod merkle_tree_tests {
     #[test]
     fn test_merkle_root1() {
         test_data(1);
-    }    
+    }
 
     #[test]
     fn test_merkle_root2() {
         test_data(2);
-    }    
+    }
 
     #[test]
     fn test_merkle_root3() {
         test_data(3);
-    }    
+    }
 
     #[test]
     fn test_merkle_root256() {
         test_data(256);
-    }    
+    }
 
     fn test_merkle_root1023() {
         test_data(1023);
-    }    
+    }
 }
 
 #[cfg(test)]
 mod bridge_tests {
-    fn test_deposit() {// let bridge_class = declare("BridgePOC").unwrap().contract_class();
+    fn test_deposit() { // let bridge_class = declare("BridgePOC").unwrap().contract_class();
     // let bridge_address = bridge_class.deploy(@array![]).unwrap();
     // let bridge = IBridgePOCDispather(contract_address);
     }
